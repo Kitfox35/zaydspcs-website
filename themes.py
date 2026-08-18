@@ -3,7 +3,10 @@
 
 RESET = """
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+/* The page commits to one light palette. Without this declaration a viewer whose OS is
+   in dark mode gets UA-dark form fields, autofill highlight and caret painted into the
+   cream — controls the stylesheet never sees and cannot correct. */
+html{-webkit-text-size-adjust:100%;color-scheme:light}
 body{margin:0;overflow-x:hidden}
 /* height:auto is not cosmetic here. Once an <img> carries width/height attributes, the
    attribute height becomes a used value and wins over aspect-ratio, so a 1200x1600 photo
@@ -602,6 +605,17 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
  .vs-head,.vs-row{grid-template-columns:12.5rem 1fr 1fr}
  .foot-logo{width:min(320px,38vw)}
 }
+/* Touch hit areas. These three are the underlined text links — the hero phone number, the
+   Instagram handle, and the two workshop links — and they are 22-29px tall, well under the
+   44px a fingertip needs. Padding would push the orange underline off the text and break the
+   thing that makes them read as links, so the box stays and an invisible overlay carries the
+   tap. Guarded by (pointer:coarse) so a mouse, which needs none of this, gets none of it. */
+@media (pointer:coarse){
+  .tel-lg,.ig-lg,.wsh-go{position:relative}
+  .tel-lg::after,.ig-lg::after,.wsh-go::after{content:"";position:absolute;
+    left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
+}
+
 @media (max-width:640px){
  section{padding:3rem 1.1rem}
  /* The hero runs its rail flush to the screen edge at this width, so this one does too.

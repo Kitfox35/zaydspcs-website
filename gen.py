@@ -11,7 +11,8 @@ import sys
 sys.dont_write_bytecode = True
 
 import pathlib, html, json
-from build import build_body, PHONE_DISPLAY, SERVICE_PATHS, ROOT
+from build import (build_body, PHONE_DISPLAY, SERVICE_PATHS, ROOT,
+                   SITE_URL, SITE_TITLE, SITE_DESC)
 from themes import THEMES, RESET
 
 # Display label -> branch key, emitted so the script cannot drift from build.py.
@@ -376,8 +377,32 @@ def page(t):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zayd's Custom PCs — Custom PC Builds, Repairs and Upgrades in Orange County</title>
-<meta name="description" content="Custom PC builds, repairs, upgrades and maintenance in Orange County. Every build quoted. Starting at $700.">
+<title>{SITE_TITLE}</title>
+<meta name="description" content="{SITE_DESC}">
+<link rel="canonical" href="{SITE_URL}">
+<!-- The page is the business card people forward. Most of that forwarding happens by text
+     message and Instagram DM, where a link with no card renders as a bare grey URL — so the
+     share card is part of the design, not an afterthought. Absolute URLs are required here:
+     scrapers do not resolve relative paths. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zayd's Custom PCs">
+<meta property="og:title" content="{SITE_TITLE}">
+<meta property="og:description" content="{SITE_DESC}">
+<meta property="og:url" content="{SITE_URL}">
+<meta property="og:image" content="{SITE_URL}assets/logo/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zayd's Custom PCs — custom builds, repairs and upgrades in Orange County.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{SITE_TITLE}">
+<meta name="twitter:description" content="{SITE_DESC}">
+<meta name="twitter:image" content="{SITE_URL}assets/logo/og.jpg">
+<!-- The mark alone, without the wordmark: at 32px the lettering is mud, the four tiles read. -->
+<link rel="icon" href="../assets/logo/logo-mark.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../assets/logo/apple-touch-icon.png">
+<!-- Paints the mobile browser chrome the page's own cream instead of leaving a seam. -->
+<meta name="theme-color" content="#FFFDEB">
 <!-- Runs during head parse, before the body paints, so anything that should wait for
      script to draw it is never briefly shown in its finished state first. -->
 <script>document.documentElement.classList.add('js')</script>

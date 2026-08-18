@@ -14,6 +14,15 @@ ASSETS = ROOT / "assets"
 OUT = ROOT / "variations"
 
 PHONE_DISPLAY = "(949) 878-0884"
+# Absolute origin of the deployed site, with the trailing slash. Only social/canonical
+# tags need it — every in-page reference stays relative so the local preview works.
+# CHANGE THIS ONE LINE when the custom domain goes live; nothing else refers to the host.
+SITE_URL = "https://kitfox35.github.io/zaydspcs-website/"
+
+SITE_TITLE = "Zayd's Custom PCs — Custom PC Builds, Repairs and Upgrades in Orange County"
+SITE_DESC = ("Custom PC builds, repairs, upgrades and maintenance in Orange County. "
+             "Every build quoted. Starting at $700.")
+
 PHONE_HREF = "tel:+19498780884"
 # The persistent mobile bar opens a message instead of dialling. Every other phone
 # link on the page still calls; this is the one that sits under the visitor's thumb.
