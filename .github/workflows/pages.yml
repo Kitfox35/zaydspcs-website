@@ -1,0 +1,57 @@
+# Publishes the generated site to GitHub Pages.
+#
+# The page is generated at site/index.html and references ../assets/, which keeps
+# the local preview (python3 -m http.server at the repo root) working. Pages serves
+# one directory as the site root, so this stages a flat copy: index.html at the top
+# with assets/ beside it, rewriting the ../ prefix on the way.
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage the site root
+        run: |
+          set -euo pipefail
+          # Fail loudly if the prefix ever changes, rather than shipping broken links.
+          grep -q '\.\./assets/' site/index.html
+          mkdir -p _site
+          cp site/index.html _site/index.html
+          cp -R assets _site/assets
+          sed -i 's|\.\./assets/|assets/|g' _site/index.html
+          touch _site/.nojekyll
+          # Every referenced asset must exist in the staged tree.
+          missing=0
+          for p in $(grep -oE '(src|srcset)="[^"]*"' _site/index.html \
+                     | grep -oE 'assets/[^ ",]*'| sort -u); do
+            [ -f "_site/$p" ] || { echo "missing: $p"; missing=1; }
+          done
+          [ "$missing" -eq 0 ]
+
+      - uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
