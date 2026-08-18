@@ -421,3 +421,10 @@ def page(t):
 if __name__ == "__main__":
     (OUT / "index.html").write_text(page(THEMES["a"]), encoding="utf-8")
     print("wrote site/index.html")
+
+    # Pages reads the custom domain from a CNAME file in the published artifact. Deriving it
+    # from SITE_URL means the domain, the canonical link and the share-card URLs cannot
+    # disagree — and a redeploy can never quietly drop the domain back to github.io.
+    host = SITE_URL.split("//", 1)[1].rstrip("/")
+    (OUT / "CNAME").write_text(host + "\n", encoding="utf-8")
+    print("wrote site/CNAME:", host)

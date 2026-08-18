@@ -19,7 +19,7 @@ PHONE_DISPLAY = "(949) 878-0884"
 # Absolute origin of the deployed site, with the trailing slash. Only social/canonical
 # tags need it — every in-page reference stays relative so the local preview works.
 # CHANGE THIS ONE LINE when the custom domain goes live; nothing else refers to the host.
-SITE_URL = "https://kitfox35.github.io/zaydspcs-website/"
+SITE_URL = "https://zaydspcs.com/"
 
 SITE_TITLE = "Zayd's Custom PCs — Custom PC Builds, Repairs and Upgrades in Orange County"
 SITE_DESC = ("Custom PC builds, repairs, upgrades and maintenance in Orange County. "
