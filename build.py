@@ -495,7 +495,7 @@ def build_body():
 
 <footer class="foot">
   <img src="../assets/logo/logo-16x9.svg" alt="Zayd's Custom PCs" class="foot-logo"
-    width="1440" height="810">
+    width="1440" height="810" loading="lazy" decoding="async">
   <p class="foot-meta">Orange County, California · {PHONE_DISPLAY} · {IG_DISPLAY}</p>
 </footer>
 '''
