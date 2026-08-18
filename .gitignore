@@ -1,0 +1,14 @@
+# Original photography and video — 1.1GB, and it contains a single 328MB file, which is
+# over GitHub's 100MB-per-file hard limit. Git is NOT backing this up. Keep a separate
+# copy of media/ somewhere safe; losing it loses the originals.
+media/
+
+# Generated derivatives — 213MB of webp/avif rebuilt from media/ by:
+#   python3 convert.py --all
+# Ignored wholesale, but the 22 files the site actually references are force-added and
+# stay tracked, so a clone of this repo is deployable on its own.
+assets/
+
+__pycache__/
+*.pyc
+.DS_Store
