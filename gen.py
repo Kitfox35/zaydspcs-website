@@ -398,9 +398,9 @@ def page(t):
 <meta name="twitter:description" content="{SITE_DESC}">
 <meta name="twitter:image" content="{SITE_URL}assets/logo/og.jpg">
 <!-- The mark alone, without the wordmark: at 32px the lettering is mud, the four tiles read. -->
-<link rel="icon" href="../assets/logo/logo-mark.svg" type="image/svg+xml">
-<link rel="icon" href="../assets/logo/favicon-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="../assets/logo/apple-touch-icon.png">
+<link rel="icon" href="assets/logo/logo-mark.svg" type="image/svg+xml">
+<link rel="icon" href="assets/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
 <!-- Paints the mobile browser chrome the page's own cream instead of leaving a seam. -->
 <meta name="theme-color" content="#FFFDEB">
 <!-- Runs during head parse, before the body paints, so anything that should wait for

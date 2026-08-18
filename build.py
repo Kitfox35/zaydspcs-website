@@ -10,7 +10,9 @@ or turnaround; unknowns render as visible TODO chips.
 import html, pathlib, re
 
 ROOT = pathlib.Path(__file__).parent
-ASSETS = ROOT / "assets"
+# The generated page and the assets it references live in one directory, so the output
+# is self-contained: site/ can be served as-is by any host, with no path rewriting.
+ASSETS = ROOT / "site" / "assets"
 OUT = ROOT / "variations"
 
 PHONE_DISPLAY = "(949) 878-0884"
@@ -158,9 +160,9 @@ def srcset(slug, base):
         return None
     (sw, _), (lw, lh) = webp_size(small), webp_size(large)
     return (
-        f"../assets/{slug}/{base}-800.avif {sw}w, ../assets/{slug}/{base}-1600.avif {lw}w",
-        f"../assets/{slug}/{base}-800.webp {sw}w, ../assets/{slug}/{base}-1600.webp {lw}w",
-        f"../assets/{slug}/{base}-1600.webp", lw, lh,
+        f"assets/{slug}/{base}-800.avif {sw}w, assets/{slug}/{base}-1600.avif {lw}w",
+        f"assets/{slug}/{base}-800.webp {sw}w, assets/{slug}/{base}-1600.webp {lw}w",
+        f"assets/{slug}/{base}-1600.webp", lw, lh,
     )
 
 
@@ -354,7 +356,7 @@ def build_body():
 
 <header class="nav">
   <a class="brand" href="#top" aria-label="Zayd's Custom PCs — home">
-    <img src="../assets/logo/logo-square.svg" alt="" width="44" height="44">
+    <img src="assets/logo/logo-square.svg" alt="" width="44" height="44">
     <span class="brand-txt"><b>Zayd’s</b> Custom PCs</span>
   </a>
   <nav class="nav-links" aria-label="Sections">
@@ -503,7 +505,7 @@ def build_body():
 </main>
 
 <footer class="foot">
-  <img src="../assets/logo/logo-16x9.svg" alt="Zayd's Custom PCs" class="foot-logo"
+  <img src="assets/logo/logo-16x9.svg" alt="Zayd's Custom PCs" class="foot-logo"
     width="1440" height="810" loading="lazy" decoding="async">
   <p class="foot-meta">Orange County, California · {PHONE_DISPLAY} · {IG_DISPLAY}</p>
 </footer>

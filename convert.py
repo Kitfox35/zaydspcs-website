@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Rebuild the web derivatives in assets/ from the originals in media/.
+"""Rebuild the web derivatives in site/assets/ from the originals in media/.
 
-Why this exists: whatever produced the current assets/ decoded each photograph and threw
+Why this exists: whatever produced the current site/assets/ decoded each photograph and threw
 away its EXIF Orientation tag WITHOUT applying it. `sips` does not rotate on conversion —
 verified — so fifteen portrait photographs are stored, and were published, on their side.
 
@@ -16,7 +16,7 @@ frames are not touched.
 import argparse, pathlib, re, struct, subprocess, sys, tempfile
 
 ROOT = pathlib.Path(__file__).parent
-MEDIA, ASSETS = ROOT / "media", ROOT / "assets"
+MEDIA, ASSETS = ROOT / "media", ROOT / "site" / "assets"
 SRC_EXT = {".jpg", ".jpeg", ".png", ".heic"}
 EDGES = (800, 1600)                 # longest edge, matching the -800/-1600 filename suffix
 WEBP_Q, AVIF_Q = "82", "62"         # calibrated against the existing derivatives

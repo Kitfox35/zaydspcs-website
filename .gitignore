@@ -5,9 +5,10 @@ media/
 
 # Generated derivatives — 213MB of webp/avif rebuilt from media/ by:
 #   python3 convert.py --all
-# Ignored wholesale, but the 22 files the site actually references are force-added and
-# stay tracked, so a clone of this repo is deployable on its own.
-assets/
+# Ignored wholesale, but the files the site actually references are force-added and stay
+# tracked, so a clone of this repo is deployable on its own. They sit inside site/ because
+# the deployable output is that whole directory and nothing else.
+site/assets/
 
 __pycache__/
 *.pyc
