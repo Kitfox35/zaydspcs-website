@@ -21,7 +21,10 @@ PHONE_DISPLAY = "(949) 878-0884"
 # CHANGE THIS ONE LINE when the custom domain goes live; nothing else refers to the host.
 SITE_URL = "https://zaydspcs.com/"
 
-SITE_TITLE = "Zayd's Custom PCs — Custom PC Builds, Repairs and Upgrades in Orange County & LA"
+# 60 characters, so Google shows the whole thing instead of truncating the location away.
+# "Orange County" in full still appears in the description, the hero lead, the footer and
+# the structured data, so shortening it here does not drop the term from the page.
+SITE_TITLE = "Zayd's Custom PCs — PC Builds, Repairs & Upgrades in OC & LA"
 SITE_DESC = ("Custom PC builds, repairs, upgrades and maintenance in Orange County and the "
              "LA area. Every build quoted. Starting at $700.")
 
