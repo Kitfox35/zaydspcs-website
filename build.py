@@ -21,9 +21,9 @@ PHONE_DISPLAY = "(949) 878-0884"
 # CHANGE THIS ONE LINE when the custom domain goes live; nothing else refers to the host.
 SITE_URL = "https://zaydspcs.com/"
 
-SITE_TITLE = "Zayd's Custom PCs — Custom PC Builds, Repairs and Upgrades in Orange County"
-SITE_DESC = ("Custom PC builds, repairs, upgrades and maintenance in Orange County. "
-             "Every build quoted. Starting at $700.")
+SITE_TITLE = "Zayd's Custom PCs — Custom PC Builds, Repairs and Upgrades in Orange County & LA"
+SITE_DESC = ("Custom PC builds, repairs, upgrades and maintenance in Orange County and the "
+             "LA area. Every build quoted. Starting at $700.")
 
 PHONE_HREF = "tel:+19498780884"
 # The persistent mobile bar opens a message instead of dialling. Every other phone
@@ -394,8 +394,8 @@ def build_body():
   <section class="hero" id="top">
     <div class="hero-txt">
       <h1>Don’t get a computer,<br>get <em>the</em> computer</h1>
-      <p class="lead">Custom PC builds, repairs, upgrades, and maintenance in Orange County
-        and surrounding areas.</p>
+      <p class="lead">Custom PC builds, repairs, upgrades, and maintenance in Orange County,
+        LA, and surrounding areas.</p>
       <p class="price"><span class="price-lab">Custom builds start at</span> <b>$700</b></p>
       <div class="hero-act">
         <a class="cta cta-lg" href="#quote">Start your quote</a>
@@ -496,7 +496,7 @@ def build_body():
          timestamped, and printable on actual paper. It answers the one fear this visitor
          arrives with: that the request vanished into a void. -->
     <div class="qf-done" id="qf-done" role="status" tabindex="-1" hidden>
-      <p class="rc-head">Zayd’s Custom PCs · Orange County</p>
+      <p class="rc-head">Zayd’s Custom PCs · Orange County &amp; LA</p>
       <h3>Request received</h3>
       <dl class="rc-list" id="qf-receipt"></dl>
       <p class="rc-msg" id="qf-done-msg"></p>
@@ -517,6 +517,6 @@ def build_body():
 <footer class="foot">
   <img src="assets/logo/logo-16x9.svg" alt="Zayd's Custom PCs" class="foot-logo"
     width="1440" height="810" loading="lazy" decoding="async">
-  <p class="foot-meta">Orange County, California · {PHONE_DISPLAY} · {IG_DISPLAY}</p>
+  <p class="foot-meta">Orange County &amp; Los Angeles, California · {PHONE_DISPLAY} · {IG_DISPLAY}</p>
 </footer>
 '''
