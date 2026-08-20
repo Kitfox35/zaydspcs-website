@@ -10,7 +10,7 @@ import sys
 # bytecode cache's (mtime, size) check — so a rebuild silently serves the old page.
 sys.dont_write_bytecode = True
 
-import pathlib, html, json
+import pathlib, html, json, datetime
 from build import (build_body, PHONE_DISPLAY, SERVICE_PATHS, ROOT,
                    SITE_URL, SITE_TITLE, SITE_DESC)
 from themes import THEMES, RESET
@@ -428,3 +428,19 @@ if __name__ == "__main__":
     host = SITE_URL.split("//", 1)[1].rstrip("/")
     (OUT / "CNAME").write_text(host + "\n", encoding="utf-8")
     print("wrote site/CNAME:", host)
+
+    # One page, so the sitemap is one URL — its job here is to give Search Console something
+    # to accept and to carry a lastmod date. Built from SITE_URL like everything else.
+    (OUT / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f'  <url>\n    <loc>{SITE_URL}</loc>\n'
+        f'    <lastmod>{datetime.date.today().isoformat()}</lastmod>\n'
+        '  </url>\n</urlset>\n', encoding="utf-8")
+    print("wrote site/sitemap.xml")
+
+    # Nothing here is private, so everything is crawlable. The Sitemap line is the part that
+    # matters: crawlers that never see Search Console still find the sitemap from here.
+    (OUT / "robots.txt").write_text(
+        "User-agent: *\nAllow: /\n\n" + f"Sitemap: {SITE_URL}sitemap.xml\n", encoding="utf-8")
+    print("wrote site/robots.txt")
