@@ -32,6 +32,16 @@ SMS_HREF = "sms:+19498780884"
 IG_DISPLAY = "@zaydspcs"
 IG_HREF = "https://instagram.com/zaydspcs"
 
+# Facts Google reads as structured data. Kept here beside the rest of the business truth so
+# there is one place to correct them, not a second copy buried in the markup.
+#
+# HOURS is a single range applied to all seven days: the hours given were "9am-9pm" with no
+# weekday qualification. If it is really weekdays only, change OPEN_DAYS to the five and
+# rebuild — nothing else needs touching.
+OPEN_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+OPEN_FROM, OPEN_TO = "09:00", "21:00"
+AREAS_SERVED = ["Orange County, California", "Los Angeles, California"]
+
 # (folder slug, CPU, GPU, pinned image base). Labels carry the CPU/GPU from the folder
 # name and nothing more, per the brief. The image is pinned per build rather than picked
 # alphabetically — a folder's first filename is not its best photograph, and the

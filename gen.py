@@ -12,7 +12,8 @@ sys.dont_write_bytecode = True
 
 import pathlib, html, json, datetime
 from build import (build_body, PHONE_DISPLAY, SERVICE_PATHS, ROOT,
-                   SITE_URL, SITE_TITLE, SITE_DESC)
+                   SITE_URL, SITE_TITLE, SITE_DESC, PHONE_HREF, IG_HREF,
+                   OPEN_DAYS, OPEN_FROM, OPEN_TO, AREAS_SERVED)
 from themes import THEMES, RESET
 
 # Display label -> branch key, emitted so the script cannot drift from build.py.
@@ -371,6 +372,34 @@ def contract_comment(t):
             f"  FINISH: {FINISH}\n-->")
 
 
+# Structured data. Everything here restates a fact already visible on the page — no claim is
+# introduced that a visitor cannot also read. Emitted as JSON so quoting and escaping are the
+# serialiser's problem, and built outside the page f-string because JSON braces would
+# otherwise be parsed as replacement fields.
+LD_JSON = json.dumps({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Zayd's Custom PCs",
+    "description": SITE_DESC,
+    "url": SITE_URL,
+    "image": SITE_URL + "assets/logo/og.jpg",
+    "logo": SITE_URL + "assets/logo/logo-square.svg",
+    "telephone": PHONE_HREF.replace("tel:", ""),
+    "priceRange": "$$",
+    # No street address: this is a service-area business, and inventing one would be a lie
+    # Google would happily publish. Region and country are the parts that are true.
+    "address": {"@type": "PostalAddress", "addressRegion": "CA", "addressCountry": "US"},
+    "areaServed": [{"@type": "AdministrativeArea", "name": a} for a in AREAS_SERVED],
+    "openingHoursSpecification": [{
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": OPEN_DAYS,
+        "opens": OPEN_FROM,
+        "closes": OPEN_TO,
+    }],
+    "sameAs": [IG_HREF],
+}, indent=2, ensure_ascii=False)
+
+
 def page(t):
     return f"""<!doctype html>
 <html lang="en">
@@ -403,6 +432,9 @@ def page(t):
 <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
 <!-- Paints the mobile browser chrome the page's own cream instead of leaving a seam. -->
 <meta name="theme-color" content="#FFFDEB">
+<script type="application/ld+json">
+{LD_JSON}
+</script>
 <!-- Runs during head parse, before the body paints, so anything that should wait for
      script to draw it is never briefly shown in its finished state first. -->
 <script>document.documentElement.classList.add('js')</script>
