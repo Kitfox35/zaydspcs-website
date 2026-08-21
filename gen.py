@@ -478,8 +478,13 @@ def page(t):
 
 
 if __name__ == "__main__":
-    (OUT / "index.html").write_text(page(THEMES["a"]), encoding="utf-8")
-    print("wrote site/index.html")
+    # Whether the page actually changed decides the sitemap's lastmod below, so the
+    # comparison has to happen before the file is overwritten.
+    index, markup = OUT / "index.html", page(THEMES["a"])
+    page_changed = (not index.exists()
+                    or index.read_text(encoding="utf-8") != markup)
+    index.write_text(markup, encoding="utf-8")
+    print("wrote site/index.html" + ("" if page_changed else " (unchanged)"))
 
     # Pages reads the custom domain from a CNAME file in the published artifact. Deriving it
     # from SITE_URL means the domain, the canonical link and the share-card URLs cannot
@@ -490,13 +495,26 @@ if __name__ == "__main__":
 
     # One page, so the sitemap is one URL — its job here is to give Search Console something
     # to accept and to carry a lastmod date. Built from SITE_URL like everything else.
-    (OUT / "sitemap.xml").write_text(
+    #
+    # lastmod is only moved when the page actually changed. Stamping today on every run made
+    # it two things it should not be: a claim to Google that the page changed when it did
+    # not — a field it is entitled to distrust if the date keeps moving under unchanged
+    # content — and a file that dirtied the working tree on any rebuild, so `git status`
+    # stopped meaning "you have edits".
+    sitemap = OUT / "sitemap.xml"
+    stamp = datetime.date.today().isoformat()
+    if not page_changed and sitemap.exists():
+        prev = sitemap.read_text(encoding="utf-8")
+        start = prev.find("<lastmod>")
+        if start > -1:
+            stamp = prev[start + 9:prev.find("</lastmod>", start)]
+    sitemap.write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         f'  <url>\n    <loc>{SITE_URL}</loc>\n'
-        f'    <lastmod>{datetime.date.today().isoformat()}</lastmod>\n'
+        f'    <lastmod>{stamp}</lastmod>\n'
         '  </url>\n</urlset>\n', encoding="utf-8")
-    print("wrote site/sitemap.xml")
+    print("wrote site/sitemap.xml, lastmod", stamp)
 
     # Nothing here is private, so everything is crawlable. The Sitemap line is the part that
     # matters: crawlers that never see Search Console still find the sitemap from here.
