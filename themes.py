@@ -6,7 +6,15 @@ RESET = """
 /* The page commits to one light palette. Without this declaration a viewer whose OS is
    in dark mode gets UA-dark form fields, autofill highlight and caret painted into the
    cream — controls the stylesheet never sees and cannot correct. */
-html{-webkit-text-size-adjust:100%;color-scheme:light}
+/* Travel, rather than a cut. The page is one long document whose sections already own
+   entrance choreography — the rail draws, the table wipes in — but a teleporting anchor
+   spent those moments on a destination the visitor had no sense of arriving at. Native
+   smooth scroll rather than a scripted tween: it stays interruptible, a wheel or a keypress
+   cancels it mid-flight, and it costs no script.
+   This MUST sit above the reduced-motion block. Both rules select `html`, a media query
+   adds no specificity, so whichever is declared last wins — put this after it and the
+   reduced-motion override silently does nothing. */
+html{-webkit-text-size-adjust:100%;color-scheme:light;scroll-behavior:smooth}
 body{margin:0;overflow-x:hidden}
 /* height:auto is not cosmetic here. Once an <img> carries width/height attributes, the
    attribute height becomes a used value and wins over aspect-ratio, so a 1200x1600 photo

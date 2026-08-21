@@ -342,7 +342,34 @@ NAV_JS = """
     if (e.target === svc) svc.classList.add('is-drawn');
   });
 
-  function tick(){ paint(); reveal(); }
+  // A jump flies over sections the visitor did not ask for. Their reveals are one-shot, so
+  // letting them fire mid-flight spends the sequence on a blur — the same failure the
+  // thresholds above exist to prevent, arriving by a different route. So reveals are held
+  // for the duration of a jump and run once the page comes to rest: the choreography then
+  // belongs to the section actually arrived at, and the ones passed over keep theirs for
+  // when the visitor scrolls back. The nav underline is NOT held — it keeps tracking during
+  // the flight, which is what makes the travel legible rather than a cut.
+  var jumping = false, jumpTimer;
+  function endJump(){
+    if (!jumping) return;
+    jumping = false;
+    clearTimeout(jumpTimer);
+    tick();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="#"]'), function(a){
+    a.addEventListener('click', function(){
+      // Reduced motion jumps instantly, so there is no flight to hold anything for.
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      jumping = true;
+      clearTimeout(jumpTimer);
+      // scrollend is not everywhere yet, and a jump that is already at its destination
+      // fires no scroll at all. Either way this closes the hold.
+      jumpTimer = setTimeout(endJump, 1400);
+    });
+  });
+  addEventListener('scrollend', endJump);
+
+  function tick(){ paint(); if (!jumping) reveal(); }
 
   var queued = false;
   addEventListener('scroll', function(){
