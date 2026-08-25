@@ -10,8 +10,8 @@ import sys
 # bytecode cache's (mtime, size) check — so a rebuild silently serves the old page.
 sys.dont_write_bytecode = True
 
-import pathlib, html, json, datetime
-from build import (build_body, PHONE_DISPLAY, SERVICE_PATHS, ROOT,
+import pathlib, html, json, datetime, re
+from build import (build_body, PHONE_DISPLAY, SERVICE_PATHS, ROOT, SERVICES,
                    SITE_URL, SITE_TITLE, SITE_DESC, PHONE_HREF, IG_HREF,
                    OPEN_DAYS, OPEN_FROM, OPEN_TO, AREAS_SERVED)
 from themes import THEMES, RESET
@@ -403,9 +403,49 @@ def contract_comment(t):
 # introduced that a visitor cannot also read. Emitted as JSON so quoting and escaping are the
 # serialiser's problem, and built outside the page f-string because JSON braces would
 # otherwise be parsed as replacement fields.
+# The four service cards, restated for machines. Google reads a bare LocalBusiness as
+# "some business" — the offer catalogue is what tells it *which* services this business
+# sells and from what price, which is the difference between ranking for "custom pc
+# builder near me" and ranking for the business name people already know.
+#
+# Prices are parsed out of the card text rather than repeated as numbers here, so the
+# schema cannot quietly disagree with what the visitor reads. A card whose price stops
+# matching the expected shape fails the build instead of shipping a wrong price to Google.
+PRICE_RE = re.compile(r"Starting at \$(\d+)(/month)?$")
+AREA_LD = [{"@type": "AdministrativeArea", "name": a} for a in AREAS_SERVED]
+
+
+def offer(name, desc, price):
+    m = PRICE_RE.fullmatch(price)
+    if not m:
+        raise SystemExit(f"SERVICES price {price!r} no longer matches "
+                         f"'Starting at $N' or 'Starting at $N/month' — update PRICE_RE "
+                         f"in gen.py so the structured data keeps matching the page.")
+    amount, monthly = int(m.group(1)), bool(m.group(2))
+    spec = {"@type": "UnitPriceSpecification", "priceCurrency": "USD", "minPrice": amount}
+    if monthly:
+        spec["referenceQuantity"] = {"@type": "QuantitativeValue", "value": 1,
+                                     "unitCode": "MON"}
+    return {
+        "@type": "Offer",
+        "priceSpecification": spec,
+        "itemOffered": {
+            "@type": "Service",
+            "name": name,
+            "description": desc,
+            "serviceType": name,
+            "provider": {"@id": SITE_URL + "#business"},
+            "areaServed": AREA_LD,
+        },
+    }
+
+
 LD_JSON = json.dumps({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    # A stable identifier so each Service above can point back at one business entity
+    # rather than describing an anonymous provider four separate times.
+    "@id": SITE_URL + "#business",
     "name": "Zayd's Custom PCs",
     "description": SITE_DESC,
     "url": SITE_URL,
@@ -416,7 +456,12 @@ LD_JSON = json.dumps({
     # No street address: this is a service-area business, and inventing one would be a lie
     # Google would happily publish. Region and country are the parts that are true.
     "address": {"@type": "PostalAddress", "addressRegion": "CA", "addressCountry": "US"},
-    "areaServed": [{"@type": "AdministrativeArea", "name": a} for a in AREAS_SERVED],
+    "areaServed": AREA_LD,
+    "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services",
+        "itemListElement": [offer(n, d, p) for n, d, p in SERVICES],
+    },
     "openingHoursSpecification": [{
         "@type": "OpeningHoursSpecification",
         "dayOfWeek": OPEN_DAYS,
@@ -436,6 +481,12 @@ def page(t):
 <title>{SITE_TITLE}</title>
 <meta name="description" content="{SITE_DESC}">
 <link rel="canonical" href="{SITE_URL}">
+<!-- Without this Google caps the search-result thumbnail at a small square and the snippet
+     at its own default length. The build photos are the strongest thing on the page and the
+     reason someone clicks a PC builder over the four other blue links, so the cap is worth
+     lifting. Nothing here asks to be indexed — that is already the default; it only widens
+     what Google is permitted to show once it has indexed the page. -->
+<meta name="robots" content="max-image-preview:large, max-snippet:-1">
 <!-- The page is the business card people forward. Most of that forwarding happens by text
      message and Instagram DM, where a link with no card renders as a bare grey URL — so the
      share card is part of the design, not an afterthought. Absolute URLs are required here:
@@ -478,8 +529,13 @@ def page(t):
 
 
 if __name__ == "__main__":
-    (OUT / "index.html").write_text(page(THEMES["a"]), encoding="utf-8")
-    print("wrote site/index.html")
+    # Whether the page actually changed decides the sitemap's lastmod below, so the
+    # comparison has to happen before the file is overwritten.
+    index, markup = OUT / "index.html", page(THEMES["a"])
+    page_changed = (not index.exists()
+                    or index.read_text(encoding="utf-8") != markup)
+    index.write_text(markup, encoding="utf-8")
+    print("wrote site/index.html" + ("" if page_changed else " (unchanged)"))
 
     # Pages reads the custom domain from a CNAME file in the published artifact. Deriving it
     # from SITE_URL means the domain, the canonical link and the share-card URLs cannot
@@ -490,13 +546,26 @@ if __name__ == "__main__":
 
     # One page, so the sitemap is one URL — its job here is to give Search Console something
     # to accept and to carry a lastmod date. Built from SITE_URL like everything else.
-    (OUT / "sitemap.xml").write_text(
+    #
+    # lastmod is only moved when the page actually changed. Stamping today on every run made
+    # it two things it should not be: a claim to Google that the page changed when it did
+    # not — a field it is entitled to distrust if the date keeps moving under unchanged
+    # content — and a file that dirtied the working tree on any rebuild, so `git status`
+    # stopped meaning "you have edits".
+    sitemap = OUT / "sitemap.xml"
+    stamp = datetime.date.today().isoformat()
+    if not page_changed and sitemap.exists():
+        prev = sitemap.read_text(encoding="utf-8")
+        start = prev.find("<lastmod>")
+        if start > -1:
+            stamp = prev[start + 9:prev.find("</lastmod>", start)]
+    sitemap.write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         f'  <url>\n    <loc>{SITE_URL}</loc>\n'
-        f'    <lastmod>{datetime.date.today().isoformat()}</lastmod>\n'
+        f'    <lastmod>{stamp}</lastmod>\n'
         '  </url>\n</urlset>\n', encoding="utf-8")
-    print("wrote site/sitemap.xml")
+    print("wrote site/sitemap.xml, lastmod", stamp)
 
     # Nothing here is private, so everything is crawlable. The Sitemap line is the part that
     # matters: crawlers that never see Search Console still find the sitemap from here.

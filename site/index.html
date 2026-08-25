@@ -6,6 +6,12 @@
 <title>Zayd's Custom PCs — PC Builds, Repairs & Upgrades in OC & LA</title>
 <meta name="description" content="Custom PC builds, repairs, upgrades and maintenance in Orange County and the LA area. Every build quoted. Starting at $700.">
 <link rel="canonical" href="https://zaydspcs.com/">
+<!-- Without this Google caps the search-result thumbnail at a small square and the snippet
+     at its own default length. The build photos are the strongest thing on the page and the
+     reason someone clicks a PC builder over the four other blue links, so the cap is worth
+     lifting. Nothing here asks to be indexed — that is already the default; it only widens
+     what Google is permitted to show once it has indexed the page. -->
+<meta name="robots" content="max-image-preview:large, max-snippet:-1">
 <!-- The page is the business card people forward. Most of that forwarding happens by text
      message and Instagram DM, where a link with no card renders as a bare grey URL — so the
      share card is part of the design, not an afterthought. Absolute URLs are required here:
@@ -33,6 +39,7 @@
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
+  "@id": "https://zaydspcs.com/#business",
   "name": "Zayd's Custom PCs",
   "description": "Custom PC builds, repairs, upgrades and maintenance in Orange County and the LA area. Every build quoted. Starting at $700.",
   "url": "https://zaydspcs.com/",
@@ -55,6 +62,125 @@
       "name": "Los Angeles, California"
     }
   ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Services",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "USD",
+          "minPrice": 700
+        },
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Custom PC builds",
+          "description": "Quoted to your requirements and budget. No fixed tiers.",
+          "serviceType": "Custom PC builds",
+          "provider": {
+            "@id": "https://zaydspcs.com/#business"
+          },
+          "areaServed": [
+            {
+              "@type": "AdministrativeArea",
+              "name": "Orange County, California"
+            },
+            {
+              "@type": "AdministrativeArea",
+              "name": "Los Angeles, California"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "USD",
+          "minPrice": 45
+        },
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Repairs",
+          "description": "Diagnosis, then a quote before any work starts.",
+          "serviceType": "Repairs",
+          "provider": {
+            "@id": "https://zaydspcs.com/#business"
+          },
+          "areaServed": [
+            {
+              "@type": "AdministrativeArea",
+              "name": "Orange County, California"
+            },
+            {
+              "@type": "AdministrativeArea",
+              "name": "Los Angeles, California"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "USD",
+          "minPrice": 45
+        },
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Upgrades",
+          "description": "Add or swap parts in a machine you already own.",
+          "serviceType": "Upgrades",
+          "provider": {
+            "@id": "https://zaydspcs.com/#business"
+          },
+          "areaServed": [
+            {
+              "@type": "AdministrativeArea",
+              "name": "Orange County, California"
+            },
+            {
+              "@type": "AdministrativeArea",
+              "name": "Los Angeles, California"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "USD",
+          "minPrice": 35,
+          "referenceQuantity": {
+            "@type": "QuantitativeValue",
+            "value": 1,
+            "unitCode": "MON"
+          }
+        },
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Maintenance plans",
+          "description": "Ongoing cleaning, servicing, and software upkeep.",
+          "serviceType": "Maintenance plans",
+          "provider": {
+            "@id": "https://zaydspcs.com/#business"
+          },
+          "areaServed": [
+            {
+              "@type": "AdministrativeArea",
+              "name": "Orange County, California"
+            },
+            {
+              "@type": "AdministrativeArea",
+              "name": "Los Angeles, California"
+            }
+          ]
+        }
+      }
+    ]
+  },
   "openingHoursSpecification": [
     {
       "@type": "OpeningHoursSpecification",
