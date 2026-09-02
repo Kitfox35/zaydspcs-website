@@ -13,7 +13,7 @@ sys.dont_write_bytecode = True
 import pathlib, html, json, datetime, re
 from build import (build_body, PHONE_DISPLAY, SERVICE_PATHS, ROOT, SERVICES,
                    SITE_URL, SITE_TITLE, SITE_DESC, PHONE_HREF, IG_HREF,
-                   OPEN_DAYS, OPEN_FROM, OPEN_TO, AREAS_SERVED)
+                   OPEN_DAYS, OPEN_FROM, OPEN_TO, AREAS_SERVED, SERVICE_PAGES)
 from themes import THEMES, RESET
 
 # Display label -> branch key, emitted so the script cannot drift from build.py.
@@ -268,6 +268,13 @@ FORM_JS = """
       });
   });
 
+  // A service page names its own path, so the form checks that radio before its first
+  // branch() runs: someone who searched "pc repair" and landed on /repairs/ has already
+  // answered question 01. Question 01 still renders and can still be changed — pre-filling
+  // an answer is a courtesy, hiding it would be a trap.
+  var pre = f.getAttribute('data-preselect');
+  if (pre) pack('service').forEach(function(r){ if (r.value === pre) r.checked = true; });
+
   bind();
   branch();
 })();
@@ -415,7 +422,7 @@ PRICE_RE = re.compile(r"Starting at \$(\d+)(/month)?$")
 AREA_LD = [{"@type": "AdministrativeArea", "name": a} for a in AREAS_SERVED]
 
 
-def offer(name, desc, price):
+def price_spec(price):
     m = PRICE_RE.fullmatch(price)
     if not m:
         raise SystemExit(f"SERVICES price {price!r} no longer matches "
@@ -426,9 +433,53 @@ def offer(name, desc, price):
     if monthly:
         spec["referenceQuantity"] = {"@type": "QuantitativeValue", "value": 1,
                                      "unitCode": "MON"}
+    return spec
+
+
+# Repeated on every service page rather than referenced across pages by @id alone: Google
+# resolves an @id reliably within one document and unreliably between them, so each page
+# carries enough of the business to stand on its own while still declaring the same id.
+PROVIDER = {
+    "@type": "LocalBusiness",
+    "@id": SITE_URL + "#business",
+    "name": "Zayd's Custom PCs",
+    "url": SITE_URL,
+    "telephone": PHONE_HREF.replace("tel:", ""),
+}
+
+
+def service_ld(sp):
+    """A service page describes one Service and its position in the site, not a second
+    business. Breadcrumbs are here because Google renders them in place of the raw URL in
+    the result — 'zaydspcs.com > PC repairs' reads as a site, a bare slug reads as a file."""
+    return json.dumps([
+        {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": sp["h1"],
+            "serviceType": sp["h1"],
+            "description": sp["desc"],
+            "url": SITE_URL + sp["slug"] + "/",
+            "provider": PROVIDER,
+            "areaServed": AREA_LD,
+            "offers": {"@type": "Offer", "priceSpecification": price_spec(sp["price"])},
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Zayd's Custom PCs",
+                 "item": SITE_URL},
+                {"@type": "ListItem", "position": 2, "name": sp["h1"]},
+            ],
+        },
+    ], indent=2, ensure_ascii=False)
+
+
+def offer(name, desc, price):
     return {
         "@type": "Offer",
-        "priceSpecification": spec,
+        "priceSpecification": price_spec(price),
         "itemOffered": {
             "@type": "Service",
             "name": name,
@@ -472,15 +523,19 @@ LD_JSON = json.dumps({
 }, indent=2, ensure_ascii=False)
 
 
-def page(t):
+def page(t, *, title, desc, path, body, ld, prefix):
+    """One page. `path` is its URL below the origin ("" for the homepage, "repairs/" for a
+    service page) and `prefix` is the walk back up to site/ from its own directory. The two
+    are the same fact from opposite ends: canonical and social tags need the absolute URL,
+    every asset reference needs the relative one."""
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{SITE_TITLE}</title>
-<meta name="description" content="{SITE_DESC}">
-<link rel="canonical" href="{SITE_URL}">
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<link rel="canonical" href="{SITE_URL}{path}">
 <!-- Without this Google caps the search-result thumbnail at a small square and the snippet
      at its own default length. The build photos are the strongest thing on the page and the
      reason someone clicks a PC builder over the four other blue links, so the cap is worth
@@ -493,25 +548,25 @@ def page(t):
      scrapers do not resolve relative paths. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zayd's Custom PCs">
-<meta property="og:title" content="{SITE_TITLE}">
-<meta property="og:description" content="{SITE_DESC}">
-<meta property="og:url" content="{SITE_URL}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{SITE_URL}{path}">
 <meta property="og:image" content="{SITE_URL}assets/logo/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Zayd's Custom PCs — custom builds, repairs and upgrades in Orange County.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{SITE_TITLE}">
-<meta name="twitter:description" content="{SITE_DESC}">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
 <meta name="twitter:image" content="{SITE_URL}assets/logo/og.jpg">
 <!-- The mark alone, without the wordmark: at 32px the lettering is mud, the four tiles read. -->
-<link rel="icon" href="assets/logo/logo-mark.svg" type="image/svg+xml">
-<link rel="icon" href="assets/logo/favicon-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+<link rel="icon" href="{prefix}assets/logo/logo-mark.svg" type="image/svg+xml">
+<link rel="icon" href="{prefix}assets/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="{prefix}assets/logo/apple-touch-icon.png">
 <!-- Paints the mobile browser chrome the page's own cream instead of leaving a seam. -->
 <meta name="theme-color" content="#FFFDEB">
 <script type="application/ld+json">
-{LD_JSON}
+{ld}
 </script>
 <!-- Runs during head parse, before the body paints, so anything that should wait for
      script to draw it is never briefly shown in its finished state first. -->
@@ -521,7 +576,7 @@ def page(t):
 </head>
 <body>
 {contract_comment(t)}
-{build_body()}
+{body}
 {FORM_JS}{NAV_JS}
 </body>
 </html>
@@ -529,46 +584,57 @@ def page(t):
 
 
 if __name__ == "__main__":
-    # Whether the page actually changed decides the sitemap's lastmod below, so the
-    # comparison has to happen before the file is overwritten.
-    index, markup = OUT / "index.html", page(THEMES["a"])
-    page_changed = (not index.exists()
-                    or index.read_text(encoding="utf-8") != markup)
-    index.write_text(markup, encoding="utf-8")
-    print("wrote site/index.html" + ("" if page_changed else " (unchanged)"))
+    # (url path below the origin, prefix back up to site/, rendered markup). The homepage
+    # first, so it is the first URL in the sitemap.
+    pages = [("", page(THEMES["a"], title=SITE_TITLE, desc=SITE_DESC, path="",
+                       body=build_body(), ld=LD_JSON, prefix=""))]
+    for sp in SERVICE_PAGES:
+        pages.append((sp["slug"] + "/",
+                      page(THEMES["a"], title=sp["title"], desc=sp["desc"],
+                           path=sp["slug"] + "/", body=build_body(sp, "../"),
+                           ld=service_ld(sp), prefix="../")))
+
+    # A directory per service, so the URL is /repairs/ rather than /repairs.html. Clean URLs
+    # are not an SEO trick — they are what people read aloud and retype off a business card.
+    changed = set()
+    for path, markup in pages:
+        f = OUT / path / "index.html"
+        f.parent.mkdir(parents=True, exist_ok=True)
+        if not f.exists() or f.read_text(encoding="utf-8") != markup:
+            changed.add(path)
+        f.write_text(markup, encoding="utf-8")
+    print(f"wrote {len(pages)} pages; changed: " +
+          (", ".join(sorted(p or "/" for p in changed)) or "none"))
 
     # Pages reads the custom domain from a CNAME file in the published artifact. Deriving it
     # from SITE_URL means the domain, the canonical link and the share-card URLs cannot
-    # disagree — and a redeploy can never quietly drop the domain back to github.io.
+    # disagree with each other — there is one host string in the project and this is it.
     host = SITE_URL.split("//", 1)[1].rstrip("/")
     (OUT / "CNAME").write_text(host + "\n", encoding="utf-8")
     print("wrote site/CNAME:", host)
 
-    # One page, so the sitemap is one URL — its job here is to give Search Console something
-    # to accept and to carry a lastmod date. Built from SITE_URL like everything else.
-    #
-    # lastmod is only moved when the page actually changed. Stamping today on every run made
-    # it two things it should not be: a claim to Google that the page changed when it did
-    # not — a field it is entitled to distrust if the date keeps moving under unchanged
-    # content — and a file that dirtied the working tree on any rebuild, so `git status`
-    # stopped meaning "you have edits".
+    # lastmod is per URL and only moves for the pages that actually changed. Stamping today
+    # on every page of every run told Google the whole site was rewritten whenever one word
+    # moved, which is exactly the signal that teaches a crawler to stop believing the file.
     sitemap = OUT / "sitemap.xml"
-    stamp = datetime.date.today().isoformat()
-    if not page_changed and sitemap.exists():
-        prev = sitemap.read_text(encoding="utf-8")
-        start = prev.find("<lastmod>")
-        if start > -1:
-            stamp = prev[start + 9:prev.find("</lastmod>", start)]
+    prev = {}
+    if sitemap.exists():
+        prev = dict(re.findall(r"<loc>(.*?)</loc>\s*<lastmod>(.*?)</lastmod>",
+                               sitemap.read_text(encoding="utf-8"), re.S))
+    today = datetime.date.today().isoformat()
+    urls = "".join(
+        "  <url>\n"
+        f"    <loc>{SITE_URL}{path}</loc>\n"
+        f"    <lastmod>{today if path in changed else prev.get(SITE_URL + path, today)}</lastmod>\n"
+        "  </url>\n" for path, _ in pages)
     sitemap.write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        f'  <url>\n    <loc>{SITE_URL}</loc>\n'
-        f'    <lastmod>{stamp}</lastmod>\n'
-        '  </url>\n</urlset>\n', encoding="utf-8")
-    print("wrote site/sitemap.xml, lastmod", stamp)
+        + urls + "</urlset>\n", encoding="utf-8")
+    print(f"wrote site/sitemap.xml, {len(pages)} urls")
 
-    # Nothing here is private, so everything is crawlable. The Sitemap line is the part that
-    # matters: crawlers that never see Search Console still find the sitemap from here.
+    # Not strictly required — an empty robots.txt would allow everything — but the Sitemap
+    # line matters: crawlers that never see Search Console still find the sitemap from here.
     (OUT / "robots.txt").write_text(
         "User-agent: *\nAllow: /\n\n" + f"Sitemap: {SITE_URL}sitemap.xml\n", encoding="utf-8")
     print("wrote site/robots.txt")

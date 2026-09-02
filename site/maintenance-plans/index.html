@@ -1,7 +1,104 @@
-#!/usr/bin/env python3
-"""Five separate visual worlds. Same markup, five stylesheets — no blending."""
-
-RESET = """
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PC Maintenance Plans in OC & LA — Zayd's Custom PCs</title>
+<meta name="description" content="Ongoing PC cleaning, servicing and software upkeep for homes and small offices in Orange County and LA. Plans start at $35 a month.">
+<link rel="canonical" href="https://zaydspcs.com/maintenance-plans/">
+<!-- Without this Google caps the search-result thumbnail at a small square and the snippet
+     at its own default length. The build photos are the strongest thing on the page and the
+     reason someone clicks a PC builder over the four other blue links, so the cap is worth
+     lifting. Nothing here asks to be indexed — that is already the default; it only widens
+     what Google is permitted to show once it has indexed the page. -->
+<meta name="robots" content="max-image-preview:large, max-snippet:-1">
+<!-- The page is the business card people forward. Most of that forwarding happens by text
+     message and Instagram DM, where a link with no card renders as a bare grey URL — so the
+     share card is part of the design, not an afterthought. Absolute URLs are required here:
+     scrapers do not resolve relative paths. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zayd's Custom PCs">
+<meta property="og:title" content="PC Maintenance Plans in OC & LA — Zayd's Custom PCs">
+<meta property="og:description" content="Ongoing PC cleaning, servicing and software upkeep for homes and small offices in Orange County and LA. Plans start at $35 a month.">
+<meta property="og:url" content="https://zaydspcs.com/maintenance-plans/">
+<meta property="og:image" content="https://zaydspcs.com/assets/logo/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zayd's Custom PCs — custom builds, repairs and upgrades in Orange County.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PC Maintenance Plans in OC & LA — Zayd's Custom PCs">
+<meta name="twitter:description" content="Ongoing PC cleaning, servicing and software upkeep for homes and small offices in Orange County and LA. Plans start at $35 a month.">
+<meta name="twitter:image" content="https://zaydspcs.com/assets/logo/og.jpg">
+<!-- The mark alone, without the wordmark: at 32px the lettering is mud, the four tiles read. -->
+<link rel="icon" href="../assets/logo/logo-mark.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../assets/logo/apple-touch-icon.png">
+<!-- Paints the mobile browser chrome the page's own cream instead of leaving a seam. -->
+<meta name="theme-color" content="#FFFDEB">
+<script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "Maintenance plans",
+    "serviceType": "Maintenance plans",
+    "description": "Ongoing PC cleaning, servicing and software upkeep for homes and small offices in Orange County and LA. Plans start at $35 a month.",
+    "url": "https://zaydspcs.com/maintenance-plans/",
+    "provider": {
+      "@type": "LocalBusiness",
+      "@id": "https://zaydspcs.com/#business",
+      "name": "Zayd's Custom PCs",
+      "url": "https://zaydspcs.com/",
+      "telephone": "+19498780884"
+    },
+    "areaServed": [
+      {
+        "@type": "AdministrativeArea",
+        "name": "Orange County, California"
+      },
+      {
+        "@type": "AdministrativeArea",
+        "name": "Los Angeles, California"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "priceCurrency": "USD",
+        "minPrice": 35,
+        "referenceQuantity": {
+          "@type": "QuantitativeValue",
+          "value": 1,
+          "unitCode": "MON"
+        }
+      }
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Zayd's Custom PCs",
+        "item": "https://zaydspcs.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Maintenance plans"
+      }
+    ]
+  }
+]
+</script>
+<!-- Runs during head parse, before the body paints, so anything that should wait for
+     script to draw it is never briefly shown in its finished state first. -->
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
 *,*::before,*::after{box-sizing:border-box}
 /* The page commits to one light palette. Without this declaration a viewer whose OS is
    in dark mode gets UA-dark form fields, autofill highlight and caret painted into the
@@ -50,20 +147,7 @@ a{color:inherit}
      would make the gallery feel dead. They just stop travelling. */
   .shot picture::before,.shot picture::after{transition:none}
 }
-"""
 
-# ---------------------------------------------------------------- A
-A = dict(
-    name="Workshop print",
-    fonts='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">',
-    contract=dict(
-        thesis="A workshop's own printed matter — hard tiles, flat color, hairline rules. Refuses the centered SaaS hero.",
-        world="Cream ground #FFFDEB, safety orange #FD5719, navy #17255A, black hairlines. Anton caps over Archivo tables. Zero radius and zero shadow everywhere EXCEPT the quote form, where answers are circled the way they are on a paper ticket: pill chips, softened fields. Radius is a form affordance here, never a page style.",
-        story="This is a bench that prints its own signage. The parts are listed because listing them is the point.",
-        viewport="Orange tile block left, headline in condensed caps right, $700 set as a printed price stamp, quote button as a hard black tile.",
-        form="Flat-color workshop print, extending the existing logo's own 2x2 tile grammar.",
-    ),
-    css="""
 :root{--bg:#FFFDEB;--ink:#111;--orange:#FD5719;--navy:#17255A;--rule:#111;--dim:#4A463A;--on-navy:#CFD5EE;--r-pill:999px;--r-field:10px}
 /* Ink on orange, never white. White on #FD5719 is 3.20:1 and fails AA at body sizes;
    ink is 5.89:1 and passes everywhere. It is also the correct print vernacular for
@@ -832,6 +916,635 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
  .price b{font-size:1.9rem}
  .hero-act{margin-top:1.1rem;gap:.7rem}
 }
-""")
+</style>
+</head>
+<body>
+<!--
+  DIRECTION CONTRACT — Workshop print
+  THESIS: A workshop's own printed matter — hard tiles, flat color, hairline rules. Refuses the centered SaaS hero.
+  OWN-WORLD: Cream ground #FFFDEB, safety orange #FD5719, navy #17255A, black hairlines. Anton caps over Archivo tables. Zero radius and zero shadow everywhere EXCEPT the quote form, where answers are circled the way they are on a paper ticket: pill chips, softened fields. Radius is a form affordance here, never a page style.
+  STORY: This is a bench that prints its own signage. The parts are listed because listing them is the point.
+  FIRST VIEWPORT: Orange tile block left, headline in condensed caps right, $700 set as a printed price stamp, quote button as a hard black tile.
+  FORM: Flat-color workshop print, extending the existing logo's own 2x2 tile grammar.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->
 
-THEMES = {"a": A}
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <a class="brand" href="../" aria-label="Zayd's Custom PCs — home">
+    <img src="../assets/logo/logo-square.svg" alt="" width="44" height="44">
+    <span class="brand-txt"><b>Zayd’s</b> Custom PCs</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="../#services">Services</a>
+    <a href="../#versus">Why choose us</a>
+    <a href="../#gallery">Builds</a>
+  </nav>
+  <div class="nav-act">
+    <a class="tel" href="tel:+19498780884">(949) 878-0884</a>
+    <a class="ig" href="https://instagram.com/zaydspcs">@zaydspcs</a>
+    <a class="cta" href="#quote">Start your quote</a>
+  </div>
+</header>
+
+<!-- Directly after the header, not at the end of the document. It is position:fixed, so
+     its visual placement is unaffected, but a keyboard user reaches the persistent
+     contact actions early instead of at tab stop 16 of 18, after the footer. -->
+<div class="mobile-bar">
+  <a href="sms:+19498780884">Text (949) 878-0884</a>
+  <a href="https://instagram.com/zaydspcs">@zaydspcs</a>
+  <a class="mb-cta" href="#quote">Quote</a>
+</div>
+
+<main id="main">
+
+  <section class="sp-hero" id="top">
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a href="../">Zayd’s Custom PCs</a>
+      <span class="crumb-sep" aria-hidden="true">/</span>
+      <span aria-current="page">Maintenance plans</span>
+    </nav>
+    <h1>Maintenance plans</h1>
+    <p class="lead">Ongoing cleaning, servicing, and software upkeep, so a machine keeps running the way it did the week you got it.</p>
+    <p class="price"><span class="price-lab">Starting at</span> <b>$35/month</b></p>
+    <div class="hero-act">
+      <a class="cta cta-lg" href="#quote">Start your quote</a>
+      <a class="tel-lg" href="tel:+19498780884">(949) 878-0884</a>
+    </div>
+  </section>
+
+  <section class="sp-what">
+    <div class="prose">
+      <p>Computers fail suddenly less often than people think. They get slower, hotter, and dustier for a year, and then something gives — and the thing that gives is usually the part that was running hot the whole time.</p>
+      <p>A maintenance plan is the cheap version of that problem: regular attention instead of one expensive failure and a week without the machine.</p>
+    </div>
+    <h2>What a plan covers</h2>
+    <ul class="sp-list">
+        <li>Physical cleaning — dust out of the fans, filters, and heatsinks</li>
+        <li>Thermal check under load, so throttling is caught before it becomes noticeable</li>
+        <li>Drive health checks and free-space management</li>
+        <li>Operating system and driver updates, done properly rather than deferred again</li>
+        <li>A security check: confirming the machine’s protection is on and current</li>
+    </ul>
+  </section>
+
+  <section class="sp-cost">
+    <h2>What it costs</h2>
+    <div class="prose">
+      <p>$35 a month is per machine, and a floor rather than a fixed rate.</p>
+      <p><b>What moves the number:</b> how many machines, and where they are.</p>
+    </div>
+  </section>
+
+  <!-- The one thing this service's visitor is most likely to be wrong about, answered
+       before they ask. It is the section that costs us jobs — repair-or-replace talks
+       people out of repairs — which is exactly why it earns its place. -->
+  <section class="sp-note">
+    <h2>Who this is actually for</h2>
+    <div class="prose">
+      <p>Households running several machines, and small offices with nobody whose job this is.</p>
+      <p>If you have one PC and you are comfortable keeping it clean and updated yourself, you probably do not need this — and we would rather tell you that than sell you a plan you would not use.</p>
+    </div>
+  </section>
+
+  <section class="sp-next">
+    <h2>What happens next</h2>
+    <ol class="steps">
+        <li class="step">
+          <h3>Tell us what you’re running</h3>
+          <p>How many machines, and what they’re used for.</p>
+        </li>
+        <li class="step">
+          <h3>We quote the plan</h3>
+          <p>Based on the count and the visit, not a package tier.</p>
+        </li>
+        <li class="step">
+          <h3>Scheduled servicing</h3>
+          <p>Regular, so problems surface while they’re still small.</p>
+        </li>
+        <li class="step">
+          <h3>You hear from us when something needs attention</h3>
+          <p>Before it becomes the reason the machine is down.</p>
+        </li>
+    </ol>
+    <a class="inline-cta" href="#quote">Start your quote</a>
+  </section>
+
+  <section class="sp-more">
+    <h2>Other services</h2>
+    <div class="more-grid">
+      <a class="more-go" href="../custom-builds/">Custom PC builds</a>
+      <a class="more-go" href="../repairs/">PC repairs</a>
+      <a class="more-go" href="../upgrades/">PC upgrades</a>
+    </div>
+  </section>
+  <!-- The job ticket. One form, one destination, five paths. Question 01 decides which
+       middle questions exist; a repair answers four, a build answers six, and nobody ever
+       reads a question meant for somebody else. Numbering is a CSS counter over the
+       questions that actually render, so a repair runs 01-04 with no gaps.
+       Nothing here is a select element — a native picker on mobile is two taps and a modal
+       for what a chip does in one. -->
+  <section class="quote" id="quote">
+    <h2>Tell us what you need</h2>
+    <!-- The count is exact once a path is chosen; before that it honestly does not
+         know, because it depends on the answer to 01. -->
+    <p class="q-lead"><span id="qf-count">A few</span> questions. We quote from there.</p>
+
+    <form class="qf" id="qform" method="post" action="https://formspree.io/f/xnpaoovd" data-endpoint="https://formspree.io/f/xnpaoovd" data-preselect="Maintenance plan">
+      <ol class="qf-list">
+
+        <li class="qf-q">
+          <fieldset class="qf-set">
+          <legend class="qf-legend"><span class="qf-n" aria-hidden="true"></span>What do you need?</legend>
+            <div class="qf-chips"><input class="qf-pick" type="radio" id="svc-0" name="service" value="New build" data-err="err-service" data-msg="Pick one" required><label class="qf-chip" for="svc-0">New build</label><input class="qf-pick" type="radio" id="svc-1" name="service" value="Repair"><label class="qf-chip" for="svc-1">Repair</label><input class="qf-pick" type="radio" id="svc-2" name="service" value="Upgrade"><label class="qf-chip" for="svc-2">Upgrade</label><input class="qf-pick" type="radio" id="svc-3" name="service" value="Maintenance plan"><label class="qf-chip" for="svc-3">Maintenance plan</label><input class="qf-pick" type="radio" id="svc-4" name="service" value="Workshop"><label class="qf-chip" for="svc-4">Workshop</label></div>
+          </fieldset>
+          <p class="qf-err" id="err-service" hidden></p>
+        </li>
+
+        <li class="qf-q" data-for="build" hidden>
+          <fieldset class="qf-set">
+          <legend class="qf-legend"><span class="qf-n" aria-hidden="true"></span>What’s your budget?</legend>
+            <div class="qf-chips"><input disabled class="qf-pick" type="radio" id="bud-0" name="budget" value="$700–$1,000" data-err="err-budget" data-msg="Pick a range" required><label class="qf-chip" for="bud-0">$700–$1,000</label><input disabled class="qf-pick" type="radio" id="bud-1" name="budget" value="$1,000–$1,500"><label class="qf-chip" for="bud-1">$1,000–$1,500</label><input disabled class="qf-pick" type="radio" id="bud-2" name="budget" value="$1,500–$2,500"><label class="qf-chip" for="bud-2">$1,500–$2,500</label><input disabled class="qf-pick" type="radio" id="bud-3" name="budget" value="$2,500+"><label class="qf-chip" for="bud-3">$2,500+</label></div>
+          </fieldset>
+          <p class="qf-err" id="err-budget" hidden></p>
+        </li>
+        <li class="qf-q" data-for="build" hidden>
+          <fieldset class="qf-set">
+          <legend class="qf-legend"><span class="qf-n" aria-hidden="true"></span>What’s it for?</legend>
+            <div class="qf-chips"><input disabled class="qf-pick" type="radio" id="use-0" name="use_case" value="Gaming" data-err="err-use" data-msg="Pick one" required><label class="qf-chip" for="use-0">Gaming</label><input disabled class="qf-pick" type="radio" id="use-1" name="use_case" value="Workstation"><label class="qf-chip" for="use-1">Workstation</label><input disabled class="qf-pick" type="radio" id="use-2" name="use_case" value="General use"><label class="qf-chip" for="use-2">General use</label><input disabled class="qf-pick" type="radio" id="use-3" name="use_case" value="Not sure yet"><label class="qf-chip" for="use-3">Not sure yet</label></div>
+          </fieldset>
+          <p class="qf-err" id="err-use" hidden></p>
+        </li>
+        <li class="qf-q" data-for="build" hidden>
+          <label class="qf-legend" for="qf-parts"><span class="qf-n" aria-hidden="true"></span>Any parts you already want?<span class="qf-opt">Optional</span></label>
+          <textarea disabled class="qf-in" id="qf-parts" name="parts" rows="3" placeholder="A GPU you have in mind, a case you like, a drive you want reused…"></textarea>
+        </li>
+
+        <li class="qf-q" data-for="repair" hidden>
+          <label class="qf-legend" for="qf-problem"><span class="qf-n" aria-hidden="true"></span>What’s wrong?</label>
+          <textarea disabled class="qf-in" id="qf-problem" name="problem" rows="3" placeholder="Won’t turn on, blue screens when gaming, fans are loud…" required data-err="err-problem" data-msg="Tell us what’s wrong"></textarea>
+          <p class="qf-err" id="err-problem" hidden></p>
+        </li>
+
+        <li class="qf-q" data-for="upgrade" hidden>
+          <fieldset class="qf-set">
+          <legend class="qf-legend"><span class="qf-n" aria-hidden="true"></span>What do you want to upgrade?</legend>
+            <div class="qf-chips"><input disabled class="qf-pick" type="checkbox" id="upg-0" name="upgrade_targets[]" value="Graphics" data-err="err-upg" data-msg="Pick at least one" data-min="1"><label class="qf-chip" for="upg-0">Graphics</label><input disabled class="qf-pick" type="checkbox" id="upg-1" name="upgrade_targets[]" value="Storage"><label class="qf-chip" for="upg-1">Storage</label><input disabled class="qf-pick" type="checkbox" id="upg-2" name="upgrade_targets[]" value="Memory"><label class="qf-chip" for="upg-2">Memory</label><input disabled class="qf-pick" type="checkbox" id="upg-3" name="upgrade_targets[]" value="Cooling"><label class="qf-chip" for="upg-3">Cooling</label><input disabled class="qf-pick" type="checkbox" id="upg-4" name="upgrade_targets[]" value="Not sure"><label class="qf-chip" for="upg-4">Not sure</label></div>
+          </fieldset>
+          <p class="qf-err" id="err-upg" hidden></p>
+        </li>
+        <li class="qf-q" data-for="upgrade" hidden>
+          <fieldset class="qf-set">
+          <legend class="qf-legend"><span class="qf-n" aria-hidden="true"></span>What’s your budget?</legend>
+            <div class="qf-chips"><input disabled class="qf-pick" type="radio" id="ubud-0" name="upgrade_budget" value="Under $150" data-err="err-ubud" data-msg="Pick a range" required><label class="qf-chip" for="ubud-0">Under $150</label><input disabled class="qf-pick" type="radio" id="ubud-1" name="upgrade_budget" value="$150–$350"><label class="qf-chip" for="ubud-1">$150–$350</label><input disabled class="qf-pick" type="radio" id="ubud-2" name="upgrade_budget" value="$350–$700"><label class="qf-chip" for="ubud-2">$350–$700</label><input disabled class="qf-pick" type="radio" id="ubud-3" name="upgrade_budget" value="$700+"><label class="qf-chip" for="ubud-3">$700+</label></div>
+          </fieldset>
+          <p class="qf-err" id="err-ubud" hidden></p>
+        </li>
+
+        <li class="qf-q" data-for="maintenance" hidden>
+          <label class="qf-legend" for="qf-notes"><span class="qf-n" aria-hidden="true"></span>Anything we should know?<span class="qf-opt">Optional</span></label>
+          <textarea disabled class="qf-in" id="qf-notes" name="notes" rows="3" placeholder="How many machines, what they’re used for, where they live…"></textarea>
+        </li>
+
+        <li class="qf-q" data-for="workshop" hidden>
+          <fieldset class="qf-set">
+          <legend class="qf-legend"><span class="qf-n" aria-hidden="true"></span>Which workshop?</legend>
+            <div class="qf-chips"><input disabled class="qf-pick" type="radio" id="wsp-0" name="workshop" value="Build Your Own PC" data-err="err-wsp" data-msg="Pick one" required><label class="qf-chip" for="wsp-0">Build Your Own PC</label><input disabled class="qf-pick" type="radio" id="wsp-1" name="workshop" value="Cybersecurity Awareness"><label class="qf-chip" for="wsp-1">Cybersecurity Awareness</label></div>
+          </fieldset>
+          <p class="qf-err" id="err-wsp" hidden></p>
+        </li>
+
+        <li class="qf-q">
+          <label class="qf-legend" for="qf-name"><span class="qf-n" aria-hidden="true"></span>Your name</label>
+          <input class="qf-in" id="qf-name" name="name" type="text" autocomplete="name"
+            required data-err="err-name" data-msg="Name required">
+          <p class="qf-err" id="err-name" hidden></p>
+        </li>
+        <li class="qf-q">
+          <p class="qf-legend"><span class="qf-n" aria-hidden="true"></span>How do we reach you?</p>
+          <div class="qf-pair">
+            <span class="qf-field">
+              <label class="qf-sub" for="qf-phone">Phone</label>
+              <input class="qf-in" id="qf-phone" name="phone" type="tel" inputmode="tel"
+                autocomplete="tel" required data-err="err-phone" data-msg="10 digits needed">
+              <p class="qf-err" id="err-phone" hidden></p>
+            </span>
+            <span class="qf-field">
+              <label class="qf-sub" for="qf-email">Email<span class="qf-opt">Optional</span></label>
+              <input class="qf-in" id="qf-email" name="email" type="email"
+                autocomplete="email" data-err="err-email" data-msg="Check it, or leave blank">
+              <p class="qf-err" id="err-email" hidden></p>
+            </span>
+          </div>
+        </li>
+
+      </ol>
+
+      <!-- Honeypot, not a captcha. Bots fill every field they find; people never see this
+           one. A captcha would put a puzzle between a paying customer and the only
+           conversion on the site. -->
+      <div class="qf-hp" aria-hidden="true">
+        <label for="qf-company">Company</label>
+        <input id="qf-company" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- Both Formspree and Basin use _subject as the email subject line. Without it every
+           request arrives titled the same thing, and an inbox of identical subjects is an
+           inbox you stop reading. Script fills it from the service and the name. -->
+      <input type="hidden" name="_subject" id="qf-subject" value="New quote request">
+
+
+      <p class="qf-note" id="qf-note" role="alert" hidden></p>
+      <button class="qf-submit" id="qf-submit" type="submit">Send my request</button>
+    </form>
+
+    <!-- Not a thank-you panel: a receipt. The business's whole claim is that you are told
+         exactly what went in and handed the paperwork, so the moment a stranger commits
+         their phone number, the ticket they just filled in prints back at them — itemised,
+         timestamped, and printable on actual paper. It answers the one fear this visitor
+         arrives with: that the request vanished into a void. -->
+    <div class="qf-done" id="qf-done" role="status" tabindex="-1" hidden>
+      <p class="rc-head">Zayd’s Custom PCs · Orange County &amp; LA</p>
+      <h3>Request received</h3>
+      <dl class="rc-list" id="qf-receipt"></dl>
+      <p class="rc-msg" id="qf-done-msg"></p>
+      <p class="rc-foot">
+        <span class="rc-stamp" id="qf-stamp"></span>
+        <button type="button" class="rc-print" id="qf-print">Print this</button>
+      </p>
+    </div>
+
+    <p class="q-or">Or skip the form</p>
+    <div class="q-act">
+      <a class="cta cta-lg" href="tel:+19498780884">(949) 878-0884</a>
+      <a class="ig-lg" href="https://instagram.com/zaydspcs">@zaydspcs</a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <img src="../assets/logo/logo-16x9.svg" alt="Zayd's Custom PCs" class="foot-logo"
+    width="1440" height="810" loading="lazy" decoding="async">
+  <p class="foot-meta">Orange County &amp; Los Angeles, California · (949) 878-0884 · @zaydspcs</p>
+</footer>
+
+
+<script>
+(function(){
+  var f = document.getElementById('qform');
+  if (!f) return;
+  var ENDPOINT = f.getAttribute('data-endpoint') || '';
+  var PHONE    = '(949) 878-0884';
+  var PATHS    = {"New build": "build", "Repair": "repair", "Upgrade": "upgrade", "Maintenance plan": "maintenance", "Workshop": "workshop"};
+  var WORDS    = {3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven'};
+  // Each path names its own service. The workshop line is deliberately not a promise of a
+  // seat: dates are TBD, so it says so rather than implying a booking that does not exist.
+  var DONE = {
+    build:       'We’ll text you at {p} to talk through the build.',
+    repair:      'We’ll text you at {p} about the repair.',
+    upgrade:     'We’ll text you at {p} to talk through the upgrade.',
+    maintenance: 'We’ll text you at {p} to set up the plan.',
+    workshop:    'We’ll text you at {p}. Dates aren’t set yet — ' +
+                 'we’ll let you know as soon as they are.'
+  };
+  // Human labels for the itemised slip. Keyed on the posted field names so a field that
+  // is added without a label here simply does not print, rather than printing a raw key.
+  var LABELS = {
+    service:'Service', budget:'Budget', use_case:'Use', parts:'Parts requested',
+    problem:'Problem', 'upgrade_targets[]':'Upgrading', upgrade_budget:'Budget',
+    notes:'Notes', workshop:'Workshop', name:'Name', phone:'Phone', email:'Email'
+  };
+  var note = document.getElementById('qf-note');
+  var btn  = document.getElementById('qf-submit');
+  var done = document.getElementById('qf-done');
+  var calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var submitted = false;
+
+  // Only once the script is confirmed running. Without it the visitor keeps the browser's
+  // own required-field enforcement on a plain form POST.
+  f.noValidate = true;
+
+  function pack(name){
+    var g = f.elements[name];
+    if (!g) return [];
+    return (g.length === undefined) ? [g] : Array.prototype.slice.call(g);
+  }
+  function service(){ var g = f.elements['service']; return g ? g.value : ''; }
+  function pathKey(){ return PATHS[service()] || ''; }
+  function ctrls(){ return f.querySelectorAll('[data-err]:not(:disabled)'); }
+  function digits(v){ return (v || '').replace(/[^0-9]/g, '').length; }
+
+  function invalid(el){
+    if (el.type === 'radio')    return !f.elements[el.name].value;
+    if (el.type === 'checkbox') return !pack(el.name).some(function(c){ return c.checked; });
+    var v = el.value.trim();
+    if (el.required && !v)    return true;
+    if (el.id === 'qf-phone') return digits(v) < 10;
+    if (el.id === 'qf-email') return v !== '' && !el.checkValidity();
+    return el.required && !el.checkValidity();
+  }
+
+  // aria-describedby is attached only while the message is visible: a hidden element
+  // referenced by describedby is announced as nothing, which is worse than silence.
+  function mark(el, show){
+    var id = el.getAttribute('data-err');
+    if (!id) return;
+    var box = document.getElementById(id);
+    if (!box) return;
+    if (show) { box.textContent = el.getAttribute('data-msg'); box.hidden = false; }
+    else      { box.hidden = true; }
+    var group = (el.type === 'radio' || el.type === 'checkbox') ? pack(el.name) : [el];
+    for (var i = 0; i < group.length; i++) {
+      if (show) { group[i].setAttribute('aria-invalid', 'true');
+                  group[i].setAttribute('aria-describedby', id); }
+      else      { group[i].removeAttribute('aria-invalid');
+                  group[i].removeAttribute('aria-describedby'); }
+    }
+  }
+
+  // Show one branch, disable the rest. Disabling is what keeps another path's answers out
+  // of the submission and out of validation; hiding alone does neither.
+  function branch(){
+    var key = pathKey();
+    var qs = f.querySelectorAll('.qf-q[data-for]');
+    for (var i = 0; i < qs.length; i++) {
+      var on = qs[i].getAttribute('data-for') === key;
+      qs[i].hidden = !on;
+      var ctl = qs[i].querySelectorAll('input, textarea');
+      for (var j = 0; j < ctl.length; j++) {
+        ctl[j].disabled = !on;
+        if (!on) mark(ctl[j], false);
+      }
+    }
+    var c = document.getElementById('qf-count');
+    if (c) {
+      var n = f.querySelectorAll('.qf-q:not([hidden])').length;
+      c.textContent = key ? (WORDS[n] || n) : 'A few';
+    }
+  }
+
+  function bind(){
+    Array.prototype.forEach.call(f.querySelectorAll('[data-err]'), function(el){
+      if (el.type === 'radio' || el.type === 'checkbox') {
+        pack(el.name).forEach(function(r){
+          r.addEventListener('change', function(){ mark(el, false); });
+        });
+      } else {
+        // Never on the first keystroke. A field the visitor has not reached yet stays
+        // silent until they submit.
+        el.addEventListener('blur', function(){
+          if (submitted || el.value.trim() !== '') mark(el, invalid(el));
+        });
+        el.addEventListener('input', function(){
+          if (el.getAttribute('aria-invalid') && !invalid(el)) mark(el, false);
+        });
+      }
+    });
+    // Delegated, not bound per radio: a bfcache restore (back button after submitting)
+    // repopulates the radios without firing anything a per-input listener would catch,
+    // which would leave a stale branch enabled and posting somebody else's answers.
+    f.addEventListener('change', function(e){ if (e.target.name === 'service') branch(); });
+    window.addEventListener('pageshow', branch);
+  }
+
+  function reveal(el){ el.scrollIntoView({block:'center', behavior: calm ? 'auto' : 'smooth'}); }
+
+  // Itemise exactly what was sent, in the order it was asked. Multi-value fields collapse
+  // to one line; empties and the honeypot never appear. Values go in as textContent, so a
+  // name with an angle bracket in it stays a name.
+  function receipt(){
+    var dl = document.getElementById('qf-receipt');
+    if (!dl) return;
+    dl.textContent = '';
+    var data = new FormData(f), seen = {}, order = [];
+    data.forEach(function(v, k){
+      // Every service-control field starts with an underscore (_subject, _gotcha,
+      // _honeypot). None of them are the visitor's answers, so none belong on the slip.
+      if (k.charAt(0) === '_' || !String(v).trim()) return;
+      if (!seen[k]) { seen[k] = []; order.push(k); }
+      seen[k].push(String(v).trim());
+    });
+    order.forEach(function(k){
+      if (!LABELS[k]) return;
+      var row = document.createElement('div'); row.className = 'rc-row';
+      var dt = document.createElement('dt'); dt.textContent = LABELS[k];
+      var dd = document.createElement('dd'); dd.textContent = seen[k].join(', ');
+      row.appendChild(dt); row.appendChild(dd); dl.appendChild(row);
+    });
+    var stamp = document.getElementById('qf-stamp');
+    if (stamp) {
+      // Not a fabricated ticket number — the actual moment it was logged, which is the one
+      // reference both sides can check against.
+      stamp.textContent = 'Logged ' + new Date().toLocaleString(undefined,
+        {day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'2-digit'});
+    }
+  }
+
+  var printBtn = document.getElementById('qf-print');
+  if (printBtn) {
+    printBtn.addEventListener('click', function(){
+      document.documentElement.classList.add('printing-receipt');
+      window.print();
+    });
+    window.addEventListener('afterprint', function(){
+      document.documentElement.classList.remove('printing-receipt');
+    });
+  }
+
+  // "Tell us you're interested" on a workshop card lands in the form with Workshop and
+  // that workshop already picked, so the visitor arrives at question 03, not question 01.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-workshop]'), function(a){
+    a.addEventListener('click', function(){
+      var svc = pack('service').filter(function(r){ return r.value === 'Workshop'; })[0];
+      if (!svc) return;
+      svc.checked = true;
+      branch();
+      var want = a.getAttribute('data-workshop');
+      pack('workshop').forEach(function(r){ if (r.value === want) r.checked = true; });
+    });
+  });
+
+  f.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    submitted = true;
+
+    var first = null;
+    Array.prototype.forEach.call(ctrls(), function(el){
+      var bad = invalid(el);
+      mark(el, bad);
+      if (bad && !first) first = el;
+    });
+    if (first) {
+      note.hidden = true;
+      first.focus({preventScroll: true});
+      reveal((first.type === 'radio' || first.type === 'checkbox')
+             ? first.closest('.qf-q') : first);
+      return;
+    }
+
+    if (!ENDPOINT) {
+      note.textContent = 'This form is not connected yet. Text ' + PHONE +
+        ' and we will take your requirements that way.';
+      note.hidden = false;
+      reveal(note);
+      return;
+    }
+
+    // A readable subject line, so the inbox is scannable at a glance rather than fifty
+    // rows of the same words.
+    var subj = document.getElementById('qf-subject');
+    if (subj) subj.value = service() + ' request — ' + f.elements['name'].value.trim();
+
+    var label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    note.hidden = true;
+
+    fetch(ENDPOINT, {method:'POST', body:new FormData(f),
+                     headers:{'Accept':'application/json'}})
+      .then(function(r){ if (!r.ok) throw new Error(r.status); })
+      .then(function(){
+        receipt();
+        var msg = DONE[pathKey()] || DONE.build;
+        document.getElementById('qf-done-msg').textContent =
+          'Thanks, ' + f.elements['name'].value.trim() + '. ' +
+          msg.replace('{p}', f.elements['phone'].value.trim());
+        f.hidden = true;
+        done.hidden = false;
+        done.focus();
+        reveal(done);
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = label;
+        // Nothing is cleared. Retyping the whole form because a network blipped is how you
+        // lose the only conversion on the site.
+        note.textContent = 'That did not send — your answers are still here. ' +
+          'Try again, or text ' + PHONE + '.';
+        note.hidden = false;
+        reveal(note);
+      });
+  });
+
+  // A service page names its own path, so the form checks that radio before its first
+  // branch() runs: someone who searched "pc repair" and landed on /repairs/ has already
+  // answered question 01. Question 01 still renders and can still be changed — pre-filling
+  // an answer is a courtesy, hiding it would be a trap.
+  var pre = f.getAttribute('data-preselect');
+  if (pre) pack('service').forEach(function(r){ if (r.value === pre) r.checked = true; });
+
+  bind();
+  branch();
+})();
+</script>
+
+<script>
+(function(){
+  var nav = document.querySelector('.nav');
+  var links = {}, sections = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.nav-links a[href^="#"]'), function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if (el) { links[el.id] = a; sections.push(el); }
+  });
+  if (!nav || !sections.length) return;
+
+  // Deliberately a position test rather than an IntersectionObserver band: "the section
+  // whose top has passed under the sticky nav and whose bottom has not yet left" is a rule
+  // that can be reasoned about and checked at any scroll offset, where a tuned rootMargin
+  // percentage can only be eyeballed. The hero and the quote panel have no nav link, so
+  // over them nothing is marked — which is correct, not a gap.
+  function currentId(){
+    var navH = nav.getBoundingClientRect().height, found = null;
+    for (var i = 0; i < sections.length; i++) {
+      var b = sections[i].getBoundingClientRect();
+      if (b.top - navH - 8 <= 0 && b.bottom > navH) found = sections[i].id;
+    }
+    return found;
+  }
+
+  function paint(){
+    var id = currentId();
+    for (var k in links) {
+      if (k === id) links[k].setAttribute('aria-current', 'true');
+      else links[k].removeAttribute('aria-current');
+    }
+  }
+
+  // All reads happen inside currentId, then one attribute write — no interleaving, so no
+  // layout thrash. Throttled to a frame; passive so it never delays the scroll itself.
+  // The comparison table plays once, when it is properly on screen rather than when its
+  // first pixel appears — a sequence the visitor scrolls past mid-way is worse than none.
+  var vs  = document.querySelector('.vs-table');
+  var svc = document.querySelector('.services');
+  function inView(el, at){
+    var b = el.getBoundingClientRect();
+    return b.top < innerHeight * at && b.bottom > 0;
+  }
+  function reveal(){
+    if (vs && !vs.classList.contains('is-set') && inView(vs, 0.82))
+      vs.classList.add('is-set');
+    // NOT earlier than the table, which is what this used to be. At 0.9 the rail began
+    // drawing with 13% of the section on screen and its top pinned to the bottom edge, so
+    // a 0.85s draw down an 814px section ran almost entirely below the fold and nobody
+    // ever saw it. The table can afford a late threshold because it is short; this section
+    // is three times its height, so it needs the draw to start once its top is genuinely
+    // in the reading area.
+    if (svc && !svc.classList.contains('is-ruled') && inView(svc, 0.45))
+      svc.classList.add('is-ruled');
+  }
+
+  // Retire the animation the moment it finishes. A one-shot class stops it being RE-ADDED,
+  // but nothing stopped the browser re-running an animation that was still declared on the
+  // element. e.target is the section itself for a ::after animation, so this cannot be
+  // triggered by anything animating inside the section.
+  if (svc) svc.addEventListener('animationend', function(e){
+    if (e.target === svc) svc.classList.add('is-drawn');
+  });
+
+  // A jump flies over sections the visitor did not ask for. Their reveals are one-shot, so
+  // letting them fire mid-flight spends the sequence on a blur — the same failure the
+  // thresholds above exist to prevent, arriving by a different route. So reveals are held
+  // for the duration of a jump and run once the page comes to rest: the choreography then
+  // belongs to the section actually arrived at, and the ones passed over keep theirs for
+  // when the visitor scrolls back. The nav underline is NOT held — it keeps tracking during
+  // the flight, which is what makes the travel legible rather than a cut.
+  var jumping = false, jumpTimer;
+  function endJump(){
+    if (!jumping) return;
+    jumping = false;
+    clearTimeout(jumpTimer);
+    tick();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="#"]'), function(a){
+    a.addEventListener('click', function(){
+      // Reduced motion jumps instantly, so there is no flight to hold anything for.
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      jumping = true;
+      clearTimeout(jumpTimer);
+      // scrollend is not everywhere yet, and a jump that is already at its destination
+      // fires no scroll at all. Either way this closes the hold.
+      jumpTimer = setTimeout(endJump, 1400);
+    });
+  });
+  addEventListener('scrollend', endJump);
+
+  function tick(){ paint(); if (!jumping) reveal(); }
+
+  var queued = false;
+  addEventListener('scroll', function(){
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function(){ tick(); queued = false; });
+  }, {passive: true});
+  addEventListener('resize', tick, {passive: true});
+  tick();
+
+  // Exposed so both scroll rules can be exercised at any offset rather than eyeballed.
+  window.__navPaint = paint;
+  window.__scrollTick = tick;
+})();
+</script>
+
+</body>
+</html>
