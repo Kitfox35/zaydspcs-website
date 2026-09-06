@@ -1,8 +1,8 @@
 # Publishes the site to GitHub Pages.
 #
-# site/ is self-contained — index.html references assets/ beside it — so the directory
-# is uploaded as-is. No staging, no path rewriting: what is served is exactly what
-# `python3 gen.py` produced and what the local preview shows.
+# site/ is self-contained — every page references assets/ by a relative path — so the
+# directory is uploaded as-is. No staging, no path rewriting: what is served is exactly
+# what `python3 gen.py` produced and what the local preview shows.
 name: Deploy site
 
 on:
@@ -27,13 +27,27 @@ jobs:
 
       - name: Check every referenced asset is present
         run: |
-          set -euo pipefail
-          missing=0
-          for p in $(grep -oE '(src|href|srcset)="[^"]*"' site/index.html \
-                     | grep -oE '(^|[" ,])assets/[^ ",]*' | tr -d '" ,' | sort -u); do
-            [ -f "site/$p" ] || { echo "missing: site/$p"; missing=1; }
-          done
-          [ "$missing" -eq 0 ]
+          python3 - <<'EOF'
+          import pathlib, re, sys
+
+          root = pathlib.Path("site")
+          pattern = re.compile(r'(?:src|href|srcset)="([^"]*)"')
+          missing = []
+          for page in sorted(root.rglob("index.html")):
+              text = page.read_text(encoding="utf-8")
+              for attr in pattern.findall(text):
+                  # srcset is a comma-separated list of "url widthdescriptor" pairs.
+                  for ref in (c.strip().split()[0] for c in attr.split(",") if c.strip()):
+                      if "assets/" not in ref:
+                          continue
+                      target = (page.parent / ref).resolve()
+                      if not target.is_file():
+                          missing.append(f"{page}: {ref}")
+          for m in missing:
+              print("missing:", m)
+          print(f"checked {len(list(root.rglob('index.html')))} pages")
+          sys.exit(1 if missing else 0)
+          EOF
 
       - uses: actions/upload-pages-artifact@v3
         with:

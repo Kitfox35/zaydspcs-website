@@ -767,6 +767,103 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
 .foot-var{color:var(--dim);font-size:.85rem;text-transform:uppercase;letter-spacing:.08em}
 .mobile-bar{display:none}
 
+/* ------------------------------------------------------------- the service sheets
+   Four pages, each one homepage service card unfolded. Same sheet, same devices: orange
+   is still the rule (the hero rail, the list markers, the step numerals), navy is still
+   fact (the price stamp, inherited outright from the homepage hero).
+   NOTHING HERE IS SCROLL-GATED, and that is deliberate rather than an omission. The nav
+   script binds to the homepage's section anchors and returns early on these pages, so a
+   reveal waiting on it would wait forever and the section would never appear. The authored
+   moment is the one the homepage already opens with — the rail draws, then the headline
+   sets — and both run on load from CSS alone. */
+.sp-hero{border-bottom:2px solid var(--rule);
+  /* Left padding is 2rem of section margin plus the hero's own 1.6rem indent, written as
+     one value instead of a >* child rule. The child rule is what forces .price to fight
+     for its own left padding on the homepage; this page does not need to inherit that. */
+  padding:3.4rem 2rem 3.2rem 3.6rem;
+  background:linear-gradient(var(--orange),var(--orange)) 0 0/12px 100% no-repeat;
+  animation:rule-down .85s cubic-bezier(.25,.46,.45,.94) both}
+/* One rail per sheet, on the left, exactly as the homepage hero rules its own margin.
+   The homepage's second rail belongs to .services, which does not exist here — so these
+   pages carry one ruled margin, not two, and the device stays worth something. */
+.sp-hero h1{font-size:clamp(1.9rem,4.2vw,3.4rem);line-height:1.06;max-width:15ch}
+.sp-hero .lead{margin-top:1.3rem}
+.sp-hero .price{margin-left:0;margin-top:1.9rem}
+
+/* Navigation, not an eyebrow: it is the only way back to the homepage above the fold, and
+   it is what the BreadcrumbList in the head describes. */
+.crumb{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;
+  color:var(--dim);margin-bottom:1.5rem}
+.crumb a{color:var(--dim);text-decoration:none;border-bottom:2px solid var(--orange)}
+.crumb a:hover,.crumb a:focus-visible{color:var(--ink)}
+.crumb-sep{padding:0 .5rem;color:var(--orange)}
+
+.sp-what h2,.sp-cost h2,.sp-note h2,.sp-next h2,.sp-more h2,.faq h2{margin-bottom:1.7rem}
+/* More space above a heading than below it, so the list belongs to the heading rather
+   than floating between two of them. */
+.sp-what h2{margin-top:3.2rem}
+.prose{max-width:66ch}
+.prose p{margin-top:1.15rem;color:var(--dim);font-size:1.02rem}
+.prose p:first-child{margin-top:0}
+.prose b{color:var(--ink);font-weight:700}
+/* The marker again, at body scale. Used once on one page — the word the repair floor turns
+   on — which is the only reason it still reads as emphasis rather than as styling. */
+.prose em{font-style:normal;color:var(--ink);
+  background:linear-gradient(var(--orange),var(--orange)) 0 50%/100% 1.15em no-repeat}
+
+.sp-list{max-width:70ch;border-top:2px solid var(--rule)}
+.sp-list li{list-style:none;position:relative;padding:1rem 0 1rem 2.3rem;
+  border-bottom:2px solid var(--rule)}
+/* 12px square: the same width as the rails. The mark and the rule are the same instrument
+   at two lengths, which is why a solid orange block reads as ruling here and not as a bullet. */
+.sp-list li::before{content:"";position:absolute;left:0;top:1.5rem;width:12px;height:12px;
+  background:var(--orange)}
+
+.sp-note{background:#FFF7DE}
+
+/* 01/02/03 earns its numbers here: the steps are a sequence in time, and "you approve"
+   before "we order" is the actual promise the section makes. Same leading-zero form as the
+   quote form's question counter, because it is the same idea — a numbered ticket. */
+.steps{counter-reset:s;max-width:70ch;padding:0;border-top:2px solid var(--rule)}
+.step{list-style:none;position:relative;padding:1.35rem 0 1.35rem 3.7rem;
+  border-bottom:2px solid var(--rule)}
+.step::before{counter-increment:s;content:counter(s,decimal-leading-zero);
+  position:absolute;left:0;top:1.35rem;font-family:Anton,sans-serif;font-size:1.2rem;
+  line-height:1;color:var(--orange)}
+.step h3{font-size:1.15rem;line-height:1.05;margin-bottom:.45rem}
+.step p{color:var(--dim);font-size:.95rem;max-width:54ch}
+
+/* Built exactly like .svc-grid — 2px gaps over an ink ground — because it is the same
+   object: a row of services you can open. Four pages that only linked back to the homepage
+   would be four dead ends. */
+.sp-more .more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  background:var(--rule);border:2px solid var(--rule)}
+.more-go{background:var(--bg);padding:1.4rem 1.2rem;text-decoration:none;color:var(--ink);
+  font-family:Anton,sans-serif;text-transform:uppercase;font-size:1.05rem;
+  display:flex;align-items:center;transition:background-color .18s}
+.more-go:hover,.more-go:focus-visible{background:var(--orange)}
+
+/* --------------------------------------------------------------------- the answers
+   Immediately before the form, because objections are answered last: these are what a
+   visitor is still holding when they reach the ask. Ruled rows, not accordions and not
+   cards — every answer is short enough to be worth showing, and a disclosure the visitor
+   has to open is one more thing between them and the only conversion on the site. */
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:3.5rem;
+  border-top:2px solid var(--rule)}
+.faq-item{padding:1.5rem 0;border-bottom:2px solid var(--rule)}
+.faq-item h3{font-size:1.1rem;margin-bottom:.55rem}
+.faq-item p{color:var(--dim);font-size:.96rem;max-width:54ch}
+
+/* The homepage card becomes the doorway to its own page. The underline is the nav's
+   device, and the overlay makes the whole card the target — nothing else inside a card is
+   interactive, so there is nothing for it to swallow. */
+.svc{position:relative}
+.svc-go{color:inherit;text-decoration:none;
+  background:linear-gradient(var(--orange),var(--orange)) 0 100%/100% 2px no-repeat;
+  transition:background-size .22s cubic-bezier(.25,.46,.45,.94)}
+.svc-go::after{content:"";position:absolute;inset:0}
+.svc:hover .svc-go,.svc-go:focus-visible{background-size:100% 5px}
+
 /* ---------------------------------------------------------------- on paper
    A shop whose pitch is "you get the receipt" should hand over one that survives
    Ctrl+P. Two modes: the ordinary page prints legibly, and the slip prints alone.
@@ -804,6 +901,11 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
  .hero-media img{object-position:50% 50%}
  .vs-head,.vs-row{grid-template-columns:12.5rem 1fr 1fr}
  .foot-logo{width:min(320px,38vw)}
+ /* Two columns of answers at this width leaves each about 40 characters — narrower
+    than the measure the rest of the page reads at, and the questions start wrapping
+    to three lines. One column is simply better here. */
+ .faq-grid{grid-template-columns:1fr}
+ .sp-more .more-grid{grid-template-columns:1fr}
 }
 /* Touch hit areas. These three are the underlined text links — the hero phone number, the
    Instagram handle, and the two workshop links — and they are 22-29px tall, well under the
@@ -837,6 +939,12 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
     dead band above the headline. The rail and photo now run to the screen edge. */
  .hero{padding:0}
  .hero-txt{padding:1.5rem 1.1rem 2.2rem}
+ /* Same treatment the hero gets here: the rail runs to the screen edge and the type
+    keeps a real gutter off it, rather than paying section padding twice. */
+ .sp-hero{padding:1.6rem 1.1rem 2.2rem 1.85rem}
+ .sp-hero h1{font-size:clamp(1.7rem,7.4vw,2.3rem)}
+ .sp-what h2{margin-top:2.4rem}
+ .step{padding-left:3rem}
  .hero-txt>*{padding-left:.75rem}
  /* .price sets its own padding shorthand earlier in the sheet, so the indent rule above
     was overriding only its LEFT padding and pushing the $700 off centre inside its box.
@@ -976,22 +1084,22 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
     <h2>What we do</h2>
     <ul class="svc-grid">
       <li class="svc">
-        <h3>Custom PC builds</h3>
+        <h3><a class="svc-go" href="custom-builds/">Custom PC builds</a></h3>
         <p>Quoted to your requirements and budget. No fixed tiers.</p>
         <p class="svc-meta">Starting at $700</p>
       </li>
       <li class="svc">
-        <h3>Repairs</h3>
+        <h3><a class="svc-go" href="repairs/">Repairs</a></h3>
         <p>Diagnosis, then a quote before any work starts.</p>
         <p class="svc-meta">Starting at $45</p>
       </li>
       <li class="svc">
-        <h3>Upgrades</h3>
+        <h3><a class="svc-go" href="upgrades/">Upgrades</a></h3>
         <p>Add or swap parts in a machine you already own.</p>
         <p class="svc-meta">Starting at $45</p>
       </li>
       <li class="svc">
-        <h3>Maintenance plans</h3>
+        <h3><a class="svc-go" href="maintenance-plans/">Maintenance plans</a></h3>
         <p>Ongoing cleaning, servicing, and software upkeep.</p>
         <p class="svc-meta">Starting at $35/month</p>
       </li>
@@ -1070,6 +1178,36 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
     <a class="inline-cta" href="#quote">Start your quote</a>
   </section>
 
+
+  <section class="faq" id="faq">
+    <h2>Common questions</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h3>How much does a custom PC cost?</h3>
+        <p>Builds start at $700, and most land between $700 and $1,500. There are no fixed tiers — the price follows the parts, and you see the parts list before you commit. The graphics card moves the number more than anything else.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is it cheaper to repair a PC or replace it?</h3>
+        <p>Usually repair, but not always, and we will tell you which. Diagnosis is free, so finding out costs you nothing. If a machine is old enough that the repair costs more than the machine is worth, we say so rather than take the job.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How long does a custom build take?</h3>
+        <p>Assembly takes a couple of days. The real wait is parts shipping, which depends on what is on the list and where it is coming from. You get an expected date when you approve the quote, and you hear from us if it moves.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Will I know exactly what parts are in my PC?</h3>
+        <p>Yes, and you get the receipt. Every part is listed by make and model, before you buy and again afterwards. This is the part boxed prebuilts do not do, and it is the reason you can upgrade the machine later instead of replacing it.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Do you charge to look at a broken computer?</h3>
+        <p>No. Diagnosis is free whether or not you go ahead with the repair. Completed repairs start at $45, and you get a quote naming the fault and the fix before any work begins.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Where do you work?</h3>
+        <p>Orange County, Los Angeles, and the surrounding areas. Call or text (949) 878-0884, or send a request through the form below.</p>
+      </div>
+    </div>
+  </section>
   <!-- The job ticket. One form, one destination, five paths. Question 01 decides which
        middle questions exist; a repair answers four, a build answers six, and nobody ever
        reads a question meant for somebody else. Numbering is a CSS counter over the
@@ -1457,6 +1595,13 @@ textarea.qf-in{min-height:6rem;line-height:1.5;resize:vertical;display:block}
         reveal(note);
       });
   });
+
+  // A service page names its own path, so the form checks that radio before its first
+  // branch() runs: someone who searched "pc repair" and landed on /repairs/ has already
+  // answered question 01. Question 01 still renders and can still be changed — pre-filling
+  // an answer is a courtesy, hiding it would be a trap.
+  var pre = f.getAttribute('data-preselect');
+  if (pre) pack('service').forEach(function(r){ if (r.value === pre) r.checked = true; });
 
   bind();
   branch();
